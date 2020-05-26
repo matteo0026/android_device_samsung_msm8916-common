@@ -226,10 +226,7 @@ vendor/lib/libthermalclient.so
 vendor/lib/libthermalioctl.so
 
 # Time services
--app/TimeService/TimeService.apk
-bin/time_daemon
-vendor/lib/libTimeService.so
--vendor/lib/libtime_genoff.so
+vendor/lib/libtime_genoff.so
 
 # Widevine - bullhead
 vendor/lib/drm/libdrmwvmplugin.so|6cfb61cd247076409a3a4e3f6ddecf24
