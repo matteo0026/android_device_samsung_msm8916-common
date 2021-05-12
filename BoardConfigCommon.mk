@@ -118,9 +118,11 @@ BOARD_ROOT_EXTRA_FOLDERS := firmware firmware-modem persist efs
 BOARD_ROOT_EXTRA_SYMLINKS := /data/tombstones:/tombstones
 
 # FM
-AUDIO_FEATURE_ENABLED_FM := true
-BOARD_HAVE_QCOM_FM := true
-AUDIO_FEATURE_ENABLED_FM_POWER_OPT := true
+ifeq ($(TARGET_PROVIDES_FM_RADIO),true)
+    AUDIO_FEATURE_ENABLED_FM := true
+    BOARD_HAVE_QCOM_FM := true
+    AUDIO_FEATURE_ENABLED_FM_POWER_OPT := true
+endif  
 
 # GPS
 TARGET_NO_RPC := true
@@ -182,14 +184,20 @@ DEXPREOPT_GENERATE_APEX_IMAGE := true
 # Legacy BLOB Support
 TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
     /system/bin/mediaserver=22 \
-    /system/vendor/bin/mm-qcamera-daemon=22 \
-    /system/vendor/bin/hw/rild=27
+    /system/vendor/bin/mm-qcamera-daemon=22
+
+ifeq ($(TARGET_PROVIDES_RIL),true)
+    TARGET_PROCESS_SDK_VERSION_OVERRIDE += \
+        /system/vendor/bin/hw/rild=27
+endif
 
 # Power
 TARGET_USES_INTERACTION_BOOST := true
 
 # Radio
-TARGET_USES_OLD_MNC_FORMAT := true
+ifeq ($(TARGET_PROVIDES_RIL),true)
+    TARGET_USES_OLD_MNC_FORMAT := true
+endif
 
 # Protobuf
 PROTOBUF_SUPPORTED := true
@@ -250,13 +258,17 @@ BOARD_SEPOLICY_DIRS += \
 # Shims
 TARGET_LD_SHIM_LIBS := \
     /system/lib/libmmjpeg_interface.so|libboringssl-compat.so \
-    /system/lib/libsec-ril.so|libshim_secril.so \
-    /system/lib/libsec-ril-dsds.so|libshim_secril.so \
     /system/lib/hw/camera.vendor.msm8916.so|libcamera_shim.so \
     /system/vendor/lib/libizat_core.so|libshim_gps.so \
     /system/vendor/lib/libqomx_jpegenc.so|libboringssl-compat.so \
     /system/vendor/lib/hw/android.hardware.bluetooth@1.0-impl-qti.so|libbase_shim.so \
     /system/vendor/lib/libgeofence.so|liblocadapterbase_shim.so
+
+ifeq ($(TARGET_PROVIDES_RIL),true)
+    TARGET_LD_SHIM_LIBS := \
+        /system/lib/libsec-ril.so|libshim_secril.so \
+        /system/lib/libsec-ril-dsds.so|libshim_secril.so
+endif
 
 # Snapdragon LLVM
 TARGET_USE_SDCLANG := true

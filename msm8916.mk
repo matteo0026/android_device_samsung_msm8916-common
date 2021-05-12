@@ -227,14 +227,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vendor.qti.hardware.cryptfshw@1.0-service-qti.qsee
 
-# FM
-PRODUCT_PACKAGES += \
-    qcom.fmradio \
-    FMRadio
+# FM RADIO
+ifeq ($(TARGET_PROVIDES_FM_RADIO),true)
+    PRODUCT_PACKAGES += \
+        init.qcom.fm.sh \
+        qcom.fmradio \
+        FMRadio
 
-# FM
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.fm.transmitter=false
+    PRODUCT_PROPERTY_OVERRIDES += \
+        ro.fm.transmitter=false \
+        media.stagefright.enable-fma2dp=true
+endif
 
 # For config.fs
 PRODUCT_PACKAGES += \
@@ -355,7 +358,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.media.treble_omx=false \
     media.aac_51_output_enabled=true \
     media.stagefright.enable-aac=true \
-    media.stagefright.enable-fma2dp=true \
     media.stagefright.enable-http=true \
     media.stagefright.enable-player=true \
     media.stagefright.enable-qcp=true \
@@ -402,16 +404,20 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.camera.front.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.accelerometer.xml \
-    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
-    frameworks/native/data/etc/android.hardware.telephony.cdma.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.cdma.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.host.xml \
     frameworks/native/data/etc/android.hardware.wifi.direct.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.xml \
     frameworks/native/data/etc/android.software.midi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.midi.xml \
-    frameworks/native/data/etc/android.software.sip.voip.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/handheld_core_hardware.xml
+
+ifeq ($(TARGET_PROVIDES_RIL),true)
+    PRODUCT_COPY_FILES += \
+        frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
+        frameworks/native/data/etc/android.hardware.telephony.cdma.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.cdma.xml \
+        frameworks/native/data/etc/android.software.sip.voip.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.sip.voip.xml
+endif
 
 # Power configuration
 PRODUCT_COPY_FILES += \
@@ -421,26 +427,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.power@1.2-service-qti
 
-# Radio
-PRODUCT_PACKAGES += \
-    librmnetctl \
-    libshim_secril \
-    libxml2 \
-    macloader
-
-# Radio
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.radio.add_power_save=1 \
-    persist.radio.apm_sim_not_pwdn=1 \
-    persist.radio.sib16_support=1
-
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.carrier.rc \
     init.class_main.sh \
-    init.link_ril_db.sh \
-    init.qcom.fm.sh \
     init.qcom.post_boot.sh \
     init.qcom.rc \
     init.qcom.sh \
@@ -467,20 +457,38 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp/mediacodec-seccomp.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy
 
 # RIL
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.rild.nitz_long_ons_0="" \
-    persist.rild.nitz_long_ons_1="" \
-    persist.rild.nitz_long_ons_2="" \
-    persist.rild.nitz_long_ons_3="" \
-    persist.rild.nitz_plmn="" \
-    persist.rild.nitz_short_ons_0="" \
-    persist.rild.nitz_short_ons_1="" \
-    persist.rild.nitz_short_ons_2="" \
-    persist.rild.nitz_short_ons_3="" \
-    ril.subscription.types=NV,RUIM \
-    DEVICE_PROVISIONED=1 \
-    rild.libpath=/system/lib/libsec-ril.so \
-    ro.multisim.set_audio_params=true
+ifeq ($(TARGET_PROVIDES_RIL),true)
+    # Radio
+    PRODUCT_PACKAGES += \
+        init.carrier.rc \
+        init.link_ril_db.sh \
+        librmnetctl \
+        libshim_secril \
+        libxml2 \
+        macloader
+
+    # Radio
+    PRODUCT_PROPERTY_OVERRIDES += \
+        persist.radio.add_power_save=1 \
+        persist.radio.apm_sim_not_pwdn=1 \
+        persist.radio.sib16_support=1
+
+    # RIL
+    PRODUCT_PROPERTY_OVERRIDES += \
+        persist.rild.nitz_long_ons_0="" \
+        persist.rild.nitz_long_ons_1="" \
+        persist.rild.nitz_long_ons_2="" \
+        persist.rild.nitz_long_ons_3="" \
+        persist.rild.nitz_plmn="" \
+        persist.rild.nitz_short_ons_0="" \
+        persist.rild.nitz_short_ons_1="" \
+        persist.rild.nitz_short_ons_2="" \
+        persist.rild.nitz_short_ons_3="" \
+        ril.subscription.types=NV,RUIM \
+        DEVICE_PROVISIONED=1 \
+        rild.libpath=/system/lib/libsec-ril.so \
+        ro.multisim.set_audio_params=true
+endif
 
 # SAMP SPCM
 PRODUCT_PROPERTY_OVERRIDES += \
