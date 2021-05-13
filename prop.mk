@@ -93,6 +93,10 @@ ifeq ($(TARGET_PROVIDES_FM_RADIO),true)
         media.stagefright.enable-fma2dp=true
 endif
 
+# OpenGLES
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.opengles.version=196608
+    
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.enable_gl_backpressure=1 \
