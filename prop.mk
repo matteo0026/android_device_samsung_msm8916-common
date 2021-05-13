@@ -196,7 +196,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Video encoding
 PRODUCT_PROPERTY_OVERRIDES += \
     vidc.enc.narrow.searchrange=1
-    
+
+# Volume
+PRODUCT_PROPERTY_OVERRIDES += \
+	ro.config.vc_call_vol_steps=15 \
+	ro.config.media_vol_steps=30
+	    
 # WiDi
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.debug.wfd.enable=1 \
