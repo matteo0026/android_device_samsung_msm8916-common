@@ -307,8 +307,12 @@ PRODUCT_PACKAGES += \
     init.qcom.usb.rc \
     init.qcom.usb.sh \
     init.recovery.qcom.rc \
-    twrp.fstab \
     ueventd.qcom.rc
+
+ifeq ($(RECOVERY_VARIANT),twrp)
+PRODUCT_PACKAGES += \
+    twrp.fstab
+endif
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.qcom:$(TARGET_COPY_OUT_RAMDISK)/fstab.qcom

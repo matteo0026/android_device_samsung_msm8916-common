@@ -124,12 +124,14 @@ ifeq ($(TARGET_PROVIDES_RIL),true)
     include $(BUILD_PREBUILT)
 endif
 
-######################
-### twrp.fstab
-include $(CLEAR_VARS)
-LOCAL_MODULE       := twrp.fstab
-LOCAL_MODULE_TAGS  := optional
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := ../recovery/$(LOCAL_MODULE)
-LOCAL_MODULE_PATH  := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
-include $(BUILD_PREBUILT)
+ifeq ($(RECOVERY_VARIANT),twrp)
+    ######################
+    ### twrp.fstab
+    include $(CLEAR_VARS)
+    LOCAL_MODULE       := twrp.fstab
+    LOCAL_MODULE_TAGS  := optional
+    LOCAL_MODULE_CLASS := ETC
+    LOCAL_SRC_FILES    := ../recovery/$(LOCAL_MODULE)
+    LOCAL_MODULE_PATH  := $(TARGET_RECOVERY_ROOT_OUT)/system/etc
+    include $(BUILD_PREBUILT)
+endif
