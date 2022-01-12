@@ -1,3 +1,8 @@
+# rootfs
+/firmware-modem                                         u:object_r:firmware_file:s0
+/tombstones                                             u:object_r:rootfs:s0
+/persist                                                u:object_r:persist_file:s0
+
 # sysfs - time
 /sys/devices/qpnp-rtc-[0-9]+/rtc/rtc0(/.*)?             u:object_r:sysfs_rtc:s0
 /(system/vendor|vendor)/bin/timekeep                    u:object_r:timekeep_exec:s0
