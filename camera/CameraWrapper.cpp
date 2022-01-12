@@ -21,7 +21,7 @@
 *
 */
 
-#define LOG_NDEBUG 0
+#define LOG_NDEBUG 1
 
 #define LOG_TAG "CameraWrapper"
 #include <log/log.h>
@@ -32,6 +32,9 @@
 #include <hardware/camera.h>
 #include <camera/Camera.h>
 #include <camera/CameraParameters.h>
+
+#define BACK_CAMERA_ID 0
+#define FRONT_CAMERA_ID 1
 
 static const char PIXEL_FORMAT_YUV420SP_NV21E[] = "yuv420sp-nv21e";
 
